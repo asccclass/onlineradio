@@ -50,4 +50,4 @@ re: stop run
 clean:
 	go clean
 s:
-	git push -u origin master
+	git push -u origin main

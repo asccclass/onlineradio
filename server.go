@@ -16,6 +16,10 @@ type ConnectionPool struct {
    mu               sync.Mutex
 }
 
+type SryStreamer struct {
+   ConnPool	*ConnectionPool
+}
+
 func (cp *ConnectionPool) AddConnection(bufferChannel chan []byte) {
    defer cp.mu.Unlock()
    cp.mu.Lock()
@@ -42,7 +46,7 @@ func (cp *ConnectionPool) Broadcast(buffer []byte) {
    }
 }
 
-func NewConnectionPool() *ConnectionPool {
+func NewConnectionPool()(*ConnectionPool) {
    bufferChannelMap := make(map[chan []byte]struct{})
    return &ConnectionPool{bufferChannelMap: bufferChannelMap}
 }
@@ -64,6 +68,13 @@ func stream(connectionPool *ConnectionPool, content []byte) {
          connectionPool.Broadcast(buffer)
       }
    }
+}
+
+func NewStreamer()(*SryStreamer, error) {
+   connPool := NewConnectionPool()
+   return &SryStreamer {
+      ConnPool: connPool,
+   }, nil
 }
 
 func main() {
